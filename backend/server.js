@@ -10,11 +10,23 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
+const databaseUrl = process.env.DATABASE_URL;
+
+if (!databaseUrl) {
+    throw new Error("DATABASE_URL is not set");
+}
+
+const isLocalDatabase =
+    databaseUrl.includes("localhost") ||
+    databaseUrl.includes("127.0.0.1");
+
 const pool = new Pool({
-    connectionString: process.env.DATABASE_URL,
-    ssl: {
-        rejectUnauthorized: false
-    }
+    connectionString: databaseUrl,
+    ssl: isLocalDatabase
+        ? false
+        : {
+              rejectUnauthorized: false
+          }
 });
 
 app.get("/", (req, res) => {
