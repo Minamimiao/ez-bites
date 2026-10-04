@@ -1,7 +1,6 @@
 const express = require("express");
 const cors = require("cors");
 const { Pool } = require("pg");
-const fs = require("fs");
 require("dotenv").config();
 
 const app = express();
@@ -11,18 +10,11 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
-let sslConfig;
-
-if (fs.existsSync("/etc/secrets/ca.pem")) {
-    sslConfig = {
-        rejectUnauthorized: true,
-        ca: fs.readFileSync("/etc/secrets/ca.pem").toString()
-    };
-}
-
 const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
-    ssl: sslConfig
+    ssl: {
+        rejectUnauthorized: false
+    }
 });
 
 app.get("/", (req, res) => {
@@ -45,6 +37,6 @@ app.get("/api/menu", async (req, res) => {
     }
 });
 
-app.listen(PORT, () => {
-    console.log(`Server running at http://localhost:${PORT}`);
+app.listen(PORT, "0.0.0.0", () => {
+    console.log(`Server running on port ${PORT}`);
 });
