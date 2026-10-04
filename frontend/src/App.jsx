@@ -16,7 +16,7 @@ function App() {
 
     return (
         <div>
-            <h1>My Restaurant</h1>
+            <h1>EZ Bites</h1>
 
             <h2>Menu</h2>
 
