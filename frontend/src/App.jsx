@@ -4,7 +4,7 @@ function App() {
     const [menu, setMenu] = useState([]);
 
     useEffect(() => {
-        fetch("http://localhost:3000/api/menu")
+    fetch(`${import.meta.env.VITE_API_URL}/api/menu`)
             .then((response) => response.json())
             .then((data) => {
                 setMenu(data);
