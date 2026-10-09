@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const { Pool } = require("pg");
+const { createDatabaseConfig } = require("./database-config");
 require("dotenv").config();
 
 const app = express();
@@ -10,24 +11,7 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
-const databaseUrl = process.env.DATABASE_URL;
-
-if (!databaseUrl) {
-    throw new Error("DATABASE_URL is not set");
-}
-
-const isLocalDatabase =
-    databaseUrl.includes("localhost") ||
-    databaseUrl.includes("127.0.0.1");
-
-const pool = new Pool({
-    connectionString: databaseUrl,
-    ssl: isLocalDatabase
-        ? false
-        : {
-              rejectUnauthorized: false
-          }
-});
+const pool = new Pool(createDatabaseConfig());
 
 app.get("/", (req, res) => {
     res.send("Restaurant Backend is running!");
