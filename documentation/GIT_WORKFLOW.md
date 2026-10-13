@@ -28,7 +28,17 @@ git switch -c feature/order-api
 
 Replace `feature/order-api` with a name describing your task.
 
-### 3. Commit and push your work
+### 3. Continue an existing task (do not create the branch again)
+
+If you already created the feature branch, switch back to it:
+
+```bash
+git switch feature/order-api
+```
+
+**Use `git switch -c` only for a new branch.** Use `git switch` to resume an existing branch. If the branch has never been pushed, skip `git pull`.
+
+### 4. Commit and push your work
 
 ```bash
 git status
@@ -39,7 +49,7 @@ git push -u origin HEAD
 
 Review your changed files before committing. **Never commit passwords, API keys, or `.env` files.**
 
-### 4. Open a Pull Request into `dev`
+### 5. Open a Pull Request into `dev`
 
 On GitHub: **Pull requests → New pull request**
 
@@ -48,7 +58,7 @@ On GitHub: **Pull requests → New pull request**
 
 Request a teammate's review. Merge after approval and testing.
 
-### 5. Release tested changes to `main`
+### 6. Release tested changes to `main`
 
 When the team agrees that `dev` is stable, open another Pull Request:
 
