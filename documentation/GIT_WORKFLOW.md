@@ -38,14 +38,53 @@ git switch feature/order-api
 
 **Use `git switch -c` only for a new branch.** Use `git switch` to resume an existing branch. If the branch has never been pushed, skip `git pull`.
 
-### 4. Commit and push your work
+### 4. Continue an Existing Task & Keep Your Feature Branch Updated
 
+Before continuing work, update your local `dev` and merge it into your existing feature branch.
+
+Commit unfinished changes first
 ```bash
-git status
 git add .
 git commit -m "feat: implement order API"
+```
+then run:
+
+```bash
+git switch dev
+git pull --ff-only origin dev
+git switch feature/order-api
+git merge dev
+```
+Replace `feature/order-api` with your branch name. Use `git switch -c` only when creating a new branch.
+Resolve any conflicts, complete the merge, and test your changes before pushing. 
+
+### 4.2 Handle Merge Conflicts
+
+If the merge succeeds, no extra commit is needed.
+
+If Git reports conflicts:
+
+1. Run `git status` to identify the conflicted files.
+2. Open those files, combine the changes correctly, and remove the conflict markers (`<<<<<<<`, `=======`, and `>>>>>>>`).
+3. Save the files and complete the merge:
+
+```bash
+git add .
+git commit -m "merge: resolve conflicts with dev"
+```
+
+Ask Jiamiao for help if you are unsure which changes to keep.
+
+
+
+### 4.2 Push Your Feature Branch:
+
+After the merge is complete, test the combined changes, then push:
+
+```bash
 git push -u origin HEAD
 ```
+
 
 Review your changed files before committing. **Never commit passwords, API keys, or `.env` files.**
 
