@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Icon from './Icons.jsx';
 import { INITIAL_PRODUCTS, SAMPLE_ORDERS, THEMES, money, orderTotal } from './data.js';
 
@@ -30,7 +30,14 @@ function FoodPhoto({ theme, className = '' }) {
 }
 
 function Brand() {
-  return <div className="brand"><span className="brand-symbol">✳</span><div className="brand-copy"><strong>ez-bites<span className="brand-period">.</span></strong><small>RESTAURANT STUDIO</small></div></div>;
+  return (
+    <div className="brand">
+      <div className="brand-copy">
+        <strong>ezbites<span className="brand-period">.</span></strong>
+        <small>OWNER WORKSPACE</small>
+      </div>
+    </div>
+  );
 }
 
 function Sidebar({ active, onChange }) {
@@ -39,49 +46,122 @@ function Sidebar({ active, onChange }) {
     { id: 'menu', label: 'Menu Management', icon: 'list' },
     { id: 'orders', label: 'Orders', icon: 'receipt' },
   ];
-  return <aside className="sidebar">
-    <Brand />
-    <div className="sidebar-nav-label">WORKSPACE</div>
-    <nav className="sidebar-nav" aria-label="Dashboard pages">
-      {links.map((link) => <button type="button" key={link.id} className={`nav-link ${active === link.id ? 'active' : ''}`} onClick={() => onChange(link.id)} aria-current={active === link.id ? 'page' : undefined}>
-        <Icon name={link.icon} size={19} /><span>{link.label}</span>{active === link.id && <span className="nav-dot" />}
-      </button>)}
-    </nav>
-    <div className="sidebar-spacer" />
-    <div className="sidebar-note"><div className="sidebar-note-top"><span className="note-status"/> FRONTEND DEMO</div><p>Make changes, explore the layout and get ready for backend integration.</p></div>
-    <div className="sidebar-footer"><div className="avatar">EB</div><div><strong>EZ-Bites Team</strong><span>Owner workspace</span></div></div>
-  </aside>;
+
+  return (
+    <aside className="sidebar">
+      <Brand />
+      <div className="sidebar-nav-label">THE WORKSPACE</div>
+      <nav className="sidebar-nav" aria-label="Dashboard pages">
+        {links.map(link => (
+          <button
+            type="button"
+            key={link.id}
+            className={`nav-link ${active === link.id ? 'active' : ''}`}
+            onClick={() => onChange(link.id)}
+            aria-current={active === link.id ? 'page' : undefined}
+          >
+            <span>{link.label}</span>
+            <Icon name="arrow" size={15} />
+          </button>
+        ))}
+      </nav>
+      <div className="sidebar-spacer" />
+      <div className="sidebar-footer">
+        <span className="sidebar-footer-kicker">EZ-BITES STUDIO</span>
+        <span>Frontend demo<br />Built for a better bite.</span>
+      </div>
+    </aside>
+  );
 }
 
 function Header({ active, onReset }) {
-  const page = { preview: ['Restaurant Preview', 'See your storefront through your customers’ eyes.'], menu: ['Menu Management', 'Everything on your menu, in one place.'], orders: ['Orders', 'A clear view of customer orders.'] }[active];
-  return <header className="page-header">
-    <div><div className="breadcrumbs">Workspace <Icon name="chevron" size={13} /> {page[0]}</div><h1>{page[0]}</h1><p>{page[1]}</p></div>
-    <div className="header-actions"><span className="demo-pill"><span className="demo-pulse"/> Demo Mode</span><button type="button" className="icon-text-button reset-button" onClick={onReset} title="Restore demo products and theme"><Icon name="refresh" size={16}/> Reset demo</button></div>
-  </header>;
+  const page = {
+    preview: { eyebrow: 'RESTAURANT PREVIEW', title: 'preview', caption: 'See your storefront through your customers’ eyes.' },
+    menu: { eyebrow: 'MENU MANAGEMENT', title: 'menu', caption: 'Everything on your menu, in one place.' },
+    orders: { eyebrow: 'ORDER HISTORY', title: 'orders', caption: 'A clear view of your customer orders.' },
+  }[active];
+
+  return (
+    <header className="page-header">
+      <div className="header-copy">
+        <div className="breadcrumbs">OWNER WORKSPACE <span>/</span> {page.eyebrow}</div>
+        <h1>The <em>{page.title}</em><span className="heading-period">.</span></h1>
+        <p>{page.caption}</p>
+      </div>
+      <div className="header-actions">
+        <span className="demo-pill"><span className="demo-pulse" /> Demo mode</span>
+        <button type="button" className="icon-text-button reset-button" onClick={onReset} title="Restore demo products and theme">
+          <Icon name="refresh" size={15} /> Reset demo
+        </button>
+      </div>
+    </header>
+  );
 }
 
+// Read-only representation of the customer site: retains the original demo state
+// and EN/FR switching, but adopts the same editorial layout as the customer UI.
 function StorefrontPreview({ products, theme, size }) {
   const [language, setLanguage] = useState('en');
   const cfg = THEMES[theme];
-  const variables = { '--store-bg': cfg.bg, '--store-text': cfg.ink, '--store-accent': cfg.accent, '--store-soft': cfg.accentSoft };
-  return <div className={`storefront ${size === 'mobile' ? 'storefront-mobile' : ''}`} style={variables}>
-    <div className="storefront-top"><span><Icon name="pin" size={12}/> 123 Harbour Street, Nanaimo, BC</span><span><Icon name="phone" size={12}/> (250) 555-0100</span></div>
-    <div className="storefront-inner">
-      <div className="storefront-brand"><span>EZ-Bites<span>.</span></span><div className="lang-switch" aria-label="Menu language"><button type="button" className={language==='en'?'selected':''} onClick={()=>setLanguage('en')}>EN</button><button type="button" className={language==='fr'?'selected':''} onClick={()=>setLanguage('fr')}>FR</button></div></div>
-      <div className="storefront-columns">
-        <div className="store-menu-col"><div className="store-eyebrow">FRESHLY PREPARED · PICKUP ONLY</div><h2>Good food.<br/><em>Good mood.</em></h2><p className="store-intro">Made with care, ready for you.</p><div className="store-menu-title">Our menu <span>{products.length} items</span></div>
-          <div className="store-menu-list">{products.length ? products.map(p => <div className={`store-menu-item ${!p.available ? 'unavailable' : ''}`} key={p.id}><div><strong>{language==='en'?p.nameEn:p.nameFr}</strong><small>{p.available ? 'Available' : 'Unavailable'}</small></div><span>{money(p.price)}</span><button disabled={!p.available} aria-label={`Add ${p.nameEn} (preview only)`} type="button" title="Read-only owner preview">+</button></div>) : <p className="empty-menu">No menu items yet. Add one in Menu Management.</p>}</div>
+  const variables = {
+    '--store-bg': cfg.bg,
+    '--store-text': cfg.ink,
+    '--store-accent': cfg.accent,
+    '--store-soft': cfg.accentSoft,
+  };
+
+  return (
+    <div className={`storefront ${size === 'mobile' ? 'storefront-mobile' : ''}`} style={variables}>
+      <div className="storefront-inner">
+        <div className="storefront-brand">
+          <span className="storefront-logo">ezbites<span>.</span></span>
+          <div className="storefront-actions">
+            <span className="storefront-link">The menu</span>
+            <div className="lang-switch" aria-label="Menu language">
+              <button type="button" className={language === 'en' ? 'selected' : ''} onClick={() => setLanguage('en')}>EN</button>
+              <button type="button" className={language === 'fr' ? 'selected' : ''} onClick={() => setLanguage('fr')}>FR</button>
+            </div>
+          </div>
         </div>
-        <div className="store-photo-col"><div className="photo-frame"><FoodPhoto theme={theme} className="store-food-photo"/><div className="photo-overlay"><span>{cfg.label.toUpperCase()} SPECIAL</span><strong>{cfg.meal}</strong></div></div><div className="photo-caption">Made for whatever the weather brings <span>✳</span></div></div>
+        <div className="storefront-columns">
+          <div className="store-menu-col">
+            <div className="store-eyebrow">TAKE YOUR PICK</div>
+            <h2>The <em>menu</em><span className="heading-period">.</span></h2>
+            <div className="store-menu-title">
+              <strong>On the menu</strong><span>{products.length} items</span>
+            </div>
+            <div className="store-menu-list">
+              {products.length ? products.map((p, index) => (
+                <div className={`store-menu-item ${!p.available ? 'unavailable' : ''}`} key={p.id}>
+                  <span className="store-item-number">{String(index + 1).padStart(2, '0')}</span>
+                  <strong>{language === 'en' ? p.nameEn : p.nameFr}</strong>
+                  <span className="store-item-price">{money(p.price)}</span>
+                  {!p.available && <small>Unavailable</small>}
+                </div>
+              )) : <p className="empty-menu">No menu items yet. Add one in Menu Management.</p>}
+            </div>
+          </div>
+          <div className="store-photo-col">
+            <div className="photo-frame">
+              <FoodPhoto theme={theme} className="store-food-photo" />
+              <div className="photo-overlay">
+                <em>A seat at the table.</em>
+                <span>EZ Bites</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="storefront-contact">
+          <span><Icon name="pin" size={12} /> 123 Harbour Street, Nanaimo, BC</span>
+          <span><Icon name="phone" size={12} /> (250) 555-0100</span>
+        </div>
       </div>
     </div>
-    <div className="store-cart"><span><Icon name="cart" size={17}/> Your cart <b>0 items</b></span><span>View cart <Icon name="arrow" size={16}/></span></div>
-  </div>;
+  );
 }
 
 function ThemeSelector({ draftTheme, onDraftChange, savedTheme, onSave }) {
-  return <section className="panel theme-panel"><div className="panel-heading"><div><h3>Weather-based themes</h3><p>Choose a look, then save to update your storefront preview.</p></div><span className="section-tag">3 presets</span></div>
+  return <section className="panel theme-panel"><div className="panel-heading"><div><h3>Theme changes</h3><p>Three looks, one restaurant. Choose a theme and save your changes.</p></div><span className="section-tag">02 / THE LOOK</span></div>
     <div className="theme-grid">
       {Object.entries(THEMES).map(([key, cfg]) => <button type="button" className={`theme-option ${draftTheme===key?'chosen':''}`} onClick={()=>onDraftChange(key)} key={key} aria-pressed={draftTheme===key}>
         <div className="theme-color" style={{background:`linear-gradient(120deg,${cfg.bg},${cfg.accentSoft})`}}><span style={{color:cfg.accent}}><Icon name={cfg.icon} size={28}/></span><div className="theme-circles"><i style={{background:cfg.accent}}/><i style={{background:cfg.color}}/><i style={{background:cfg.ink}}/></div></div>
@@ -95,16 +175,34 @@ function ThemeSelector({ draftTheme, onDraftChange, savedTheme, onSave }) {
 function PreviewPage({ products, theme, onSaveTheme, toast }) {
   const [draftTheme, setDraftTheme] = useState(theme);
   const [device, setDevice] = useState('desktop');
-  useEffect(()=>setDraftTheme(theme),[theme]);
-  function save() { onSaveTheme(draftTheme); toast(`${THEMES[draftTheme].label} theme saved to this browser`); }
-  return <div className="page-content">
-    <div className="welcome-banner"><div><div className="welcome-kicker"><Icon name="sparkle" size={15}/> YOUR DIGITAL STOREFRONT</div><h2>A little sunshine for your restaurant.</h2><p>Preview your menu exactly as customers would see it. Customize the look below.</p></div><div className="banner-ornament">✳</div></div>
-    <section className="panel preview-panel"><div className="panel-heading"><div><h3>Storefront preview</h3><p>Saved theme and menu changes appear here.</p></div><div className="device-switch"><button type="button" aria-label="Desktop preview" aria-pressed={device==='desktop'} className={device==='desktop'?'selected':''} onClick={()=>setDevice('desktop')}><Icon name="device" size={17}/><span>Desktop</span></button><button type="button" aria-label="Mobile preview" aria-pressed={device==='mobile'} className={device==='mobile'?'selected':''} onClick={()=>setDevice('mobile')}><Icon name="mobile" size={17}/><span>Mobile</span></button></div></div>
-      <div className={`preview-stage ${device==='mobile'?'is-mobile':''}`}><div className="browser-chrome"><div className="browser-dots"><i/><i/><i/></div><div className="browser-url">ez-bites · customer storefront preview</div><span className="browser-live"><span/> Preview</span></div><StorefrontPreview products={products} theme={theme} size={device}/></div>
-      <p className="preview-hint"><Icon name="eye" size={16}/> This is a read-only preview. Order placement will be connected in a later phase.</p>
-    </section>
-    <ThemeSelector draftTheme={draftTheme} onDraftChange={setDraftTheme} savedTheme={theme} onSave={save}/>
-  </div>;
+  useEffect(() => setDraftTheme(theme), [theme]);
+  function save() {
+    onSaveTheme(draftTheme);
+    toast(`${THEMES[draftTheme].label} theme saved to this browser`);
+  }
+
+  return (
+    <div className="page-content">
+      <section className="panel preview-panel">
+        <div className="panel-heading">
+          <div>
+            <div className="section-kicker">01 / THE STOREFRONT</div>
+            <h3>Storefront preview</h3>
+            <p>Saved menu and theme changes appear here.</p>
+          </div>
+          <div className="device-switch">
+            <button type="button" aria-label="Desktop preview" aria-pressed={device === 'desktop'} className={device === 'desktop' ? 'selected' : ''} onClick={() => setDevice('desktop')}><Icon name="device" size={17} /> Desktop</button>
+            <button type="button" aria-label="Mobile preview" aria-pressed={device === 'mobile'} className={device === 'mobile' ? 'selected' : ''} onClick={() => setDevice('mobile')}><Icon name="mobile" size={17} /> Mobile</button>
+          </div>
+        </div>
+        <div className={`preview-stage ${device === 'mobile' ? 'is-mobile' : ''}`}>
+          <StorefrontPreview products={products} theme={theme} size={device} />
+        </div>
+        <p className="preview-hint"><Icon name="eye" size={16} /> Read-only example. The customer ordering site will be connected in a later phase.</p>
+      </section>
+      <ThemeSelector draftTheme={draftTheme} onDraftChange={setDraftTheme} savedTheme={theme} onSave={save} />
+    </div>
+  );
 }
 
 function ProductModal({ product, onClose, onSave }) {
