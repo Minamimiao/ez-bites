@@ -82,10 +82,10 @@ Ask Jiamiao for help if you are unsure which changes to keep.
 After the merge is complete, test the combined changes, then push:
 
 ```bash
-git push -u origin HEAD
+git push --set-upstream origin feature/owner-website-style
 ```
 
-
+Replace `feature/order-api` with your branch name.
 Review your changed files before committing. **Never commit passwords, API keys, or `.env` files.**
 
 ### 5. Open a Pull Request into `dev`
