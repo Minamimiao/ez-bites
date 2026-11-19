@@ -152,8 +152,8 @@ function StorefrontPreview({ products, theme, size }) {
           </div>
         </div>
         <div className="storefront-contact">
-          <span><Icon name="pin" size={12} /> 123 Harbour Street, Nanaimo, BC</span>
-          <span><Icon name="phone" size={12} /> (250) 555-0100</span>
+          <span><Icon name="pin" size={12} /> 900 Fifth St, Nanaimo, BC</span>
+          <span><Icon name="phone" size={12} /> (250) 753-3245</span>
         </div>
       </div>
     </div>
