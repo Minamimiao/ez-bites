@@ -19,10 +19,16 @@ app.get("/", (req, res) => {
 
 app.get("/api/menu", async (req, res) => {
     try {
-        const result = await pool.query(
-            "SELECT * FROM menu_items ORDER BY id"
-        );
-
+       const result = await pool.query(`
+    SELECT
+        id,
+        english_name AS name,
+        french_name,
+        price,
+        availability
+    FROM public.items
+    ORDER BY id
+`);
         res.json(result.rows);
     } catch (error) {
         console.error("Database error:", error);
