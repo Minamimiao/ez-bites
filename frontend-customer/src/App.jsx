@@ -1,96 +1,148 @@
-import React, { useEffect, useState } from 'react';
-import Icon from './Icons.jsx';
-import { INITIAL_PRODUCTS, SAMPLE_ORDERS, THEMES, money, orderTotal } from './data.js';
+import { useEffect, useState } from "react";
 
-const STORAGE_KEY = 'ez-bites-owner-dashboard-v1';
-const EMPTY_PRODUCT = { nameEn: '', nameFr: '', price: '', available: true };
+const API_URL = (import.meta.env.VITE_API_URL || "").replace(/\/+$/, "");
 
-function initialState() {
-  try {
-    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
-    if (saved && Array.isArray(saved.products) && THEMES[saved.theme]) {
-      return { products: saved.products, theme: saved.theme };
+function formatPrice(value) {
+  const price = Number(value);
+  return value !== null && value !== "" && Number.isFinite(price)
+    ? `$${price.toFixed(2)}`
+    : "Price unavailable";
+}
+
+function App() {
+  const [menu, setMenu] = useState([]);
+  const [status, setStatus] = useState("loading");
+  const [attempt, setAttempt] = useState(0);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 45000);
+    let active = true;
+
+    async function loadMenu() {
+      setStatus("loading");
+      try {
+        const response = await fetch(`${API_URL}/api/menu`, {
+          signal: controller.signal,
+        });
+        if (!response.ok) throw new Error("Menu request failed");
+        const data = await response.json();
+        if (!Array.isArray(data) || data.some((item) => !item || typeof item.name !== "string")) {
+          throw new Error("Invalid menu response");
+        }
+        if (active) {
+          setMenu(data);
+          setStatus("ready");
+        }
+      } catch {
+        if (active) setStatus("error");
+      } finally {
+        clearTimeout(timeout);
+      }
     }
-  } catch { /* Use sample data when local storage is unavailable. */ }
-  return { products: INITIAL_PRODUCTS, theme: 'sunny' };
-}
 
-function FoodPhoto({ theme, className = '' }) {
-  const cfg = THEMES[theme];
-  const [failed, setFailed] = useState(false);
-  useEffect(() => setFailed(false), [theme]);
-  return (
-    <img
-      className={className}
-      src={failed ? cfg.fallback : cfg.photo}
-      alt={`${cfg.meal} — ${cfg.label.toLowerCase()} theme`}
-      onError={() => setFailed(true)}
-    />
-  );
-}
+    loadMenu();
+    return () => {
+      active = false;
+      clearTimeout(timeout);
+      controller.abort();
+    };
+  }, [attempt]);
 
-function Brand() {
   return (
-    <div className="brand">
-      <div className="brand-copy">
-        <strong>ezbites<span className="brand-period">.</span></strong>
-        <small>OWNER WORKSPACE</small>
-      </div>
+    <div className="site-shell">
+      <a className="skip-link" href="#menu">Skip to menu</a>
+      <header className="site-header">
+        <a className="wordmark" href="#top" aria-label="EZ Bites home">
+          ez<span>bites</span><span className="wordmark-period">.</span>
+        </a>
+        <a className="menu-link" href="#menu" aria-current="page">The menu</a>
+      </header>
+
+      <main id="top" className="menu-layout">
+        <section id="menu" className="menu-panel" aria-labelledby="menu-title">
+          <div className="menu-intro">
+            <p className="eyebrow">Take your pick</p>
+            <h1 id="menu-title">The <em>menu</em><span>.</span></h1>
+          </div>
+
+          <div className="menu-section-heading">
+            <h2>On the menu</h2>
+            {status === "ready" && <span>{menu.length} {menu.length === 1 ? "item" : "items"}</span>}
+          </div>
+
+          <div className="menu-content" aria-busy={status === "loading"}>
+            {status === "loading" && (
+              <div className="loading-state" role="status">
+                <p className="loading-label">Getting the menu ready…</p>
+                <div className="menu-list skeleton-list" aria-hidden="true">
+                  {[0, 1, 2, 3].map((item) => (
+                    <div className="menu-item skeleton-item" key={item}>
+                      <span className="skeleton skeleton-number" />
+                      <span className="skeleton skeleton-name" />
+                      <span className="skeleton skeleton-price" />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {status === "error" && (
+              <div className="message-state" role="alert">
+                <h3>The menu is taking a little longer.</h3>
+                <p>We couldn’t load it just now. Please try again.</p>
+                <button className="retry-button" onClick={() => setAttempt((value) => value + 1)}>Try again</button>
+              </div>
+            )}
+
+            {status === "ready" && menu.length === 0 && (
+              <div className="message-state" role="status">
+                <h3>Something good is on its way.</h3>
+                <p>Our menu will be here soon. Check back later.</p>
+              </div>
+            )}
+
+            {status === "ready" && menu.length > 0 && (
+              <ul className="menu-list">
+                {menu.map((item, index) => (
+                  <li className="menu-item" key={item.id ?? index}>
+                    <span className="item-number" aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
+                    <h3>{item.name}</h3>
+                    <span className="item-price">{formatPrice(item.price)}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+
+          <div className="menu-signoff" aria-hidden="true">
+            <span>EZ BITES</span>
+            <span className="signoff-line" />
+            <span>Enjoy.</span>
+          </div>
+        </section>
+
+        <figure className="table-photo">
+          <img
+            src="/images/table-editorial.webp"
+            alt="A sunlit restaurant table with a toasted sandwich, greens, and an orange linen napkin."
+            width="1024"
+            height="1536"
+            fetchPriority="high"
+          />
+          <figcaption className="photo-caption">
+            <span>A seat at the table.</span>
+            <span>EZ Bites</span>
+          </figcaption>
+        </figure>
+      </main>
+
+      <footer className="site-footer">
+        <span>EZ Bites</span>
+        <span>Good company. Good bites.</span>
+      </footer>
     </div>
   );
 }
 
-function Sidebar({ active, onChange }) {
-  const links = [
-    { id: 'preview', label: 'Restaurant Preview', icon: 'eye' },
-    { id: 'menu', label: 'Menu Management', icon: 'list' },
-    { id: 'orders', label: 'Orders', icon: 'receipt' },
-  ];
-
-  return (
-    <aside className="sidebar">
-      <Brand />
-      <div className="sidebar-nav-label">THE WORKSPACE</div>
-      <nav className="sidebar-nav" aria-label="Dashboard pages">
-        {links.map(link => (
-          <button
-            type="button"
-            key={link.id}
-            className={`nav-link ${active === link.id ? 'active' : ''}`}
-            onClick={() => onChange(link.id)}
-            aria-current={active === link.id ? 'page' : undefined}
-          >
-            <span>{link.label}</span>
-            <Icon name="arrow" size={15} />
-          </button>
-        ))}
-      </nav>
-      <div className="sidebar-spacer" />
-      <div className="sidebar-footer">
-        <span className="sidebar-footer-kicker">EZ-BITES STUDIO</span>
-        <span>Frontend demo<br />Built for a better bite.</span>
-      </div>
-    </aside>
-  );
-}
-
-function Header({ active, onReset }) {
-  const page = {
-    preview: { eyebrow: 'RESTAURANT PREVIEW', title: 'preview', caption: 'See your storefront through your customers’ eyes.' },
-    menu: { eyebrow: 'MENU MANAGEMENT', title: 'menu', caption: 'Everything on your menu, in one place.' },
-    orders: { eyebrow: 'ORDER HISTORY', title: 'orders', caption: 'A clear view of your customer orders.' },
-  }[active];
-
-  return (
-    <header className="page-header">
-      <div className="header-copy">
-        <div className="breadcrumbs">OWNER WORKSPACE <span>/</span> {page.eyebrow}</div>
-        <h1>The <em>{page.title}</em><span className="heading-period">.</span></h1>
-        <p>{page.caption}</p>
-      </div>
-      <div className="header-actions">
-        <span className="demo-pill"><span className="demo-pulse" /> Demo mode</span>
-        <button type="button" className="icon-text-button reset-button" onClick={onReset} title="Restore demo products and theme">
-          <Icon name="refresh" size={15} /> Reset demo
-        </button>
-      </div>
+export default App;
