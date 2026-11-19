@@ -136,7 +136,7 @@ a { color: inherit; }
 .photo-overlay { position: absolute; left: 0; right: 0; bottom: 0; padding: 26px 25px 21px; display: flex; align-items: end; justify-content: space-between; gap: 10px; color: #fff; background: linear-gradient(transparent, #0b0a08a6); }
 .photo-overlay em { font: italic 23px Georgia, 'Times New Roman', serif; }
 .photo-overlay span { font-size: 9px; white-space: nowrap; letter-spacing: 1px; }
-.storefront-contact { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px 20px; margin-top: 18px; padding-top: 14px; border-top: 1px solid #dedbd5; color: #817b74; font-size: 9px; }
+.storefront-contact { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px 20px; margin-top: 18px; padding-top: 14px; border-top: 1px solid #dedbd5; color: #817b74; font-size: 14px; }
 .storefront-contact span { display: inline-flex; align-items: center; gap: 5px; }
 .storefront-mobile .storefront-inner { padding: 18px 18px 17px; }
 .storefront-mobile .storefront-logo { font-size: 19px; }
