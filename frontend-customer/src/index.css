@@ -29,6 +29,12 @@ button { font: inherit; }
 .wordmark-period { color: var(--accent); }
 .menu-link { font-size: .875rem; font-weight: 600; text-underline-offset: .4rem; text-decoration-thickness: 1px; }
 .menu-link:hover { color: var(--accent-text); }
+.header-actions { display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 1rem; }
+.language-switch { display: inline-flex; border: 1px solid var(--line); flex-shrink: 0; }
+.language-switch button { min-width: 36px; min-height: 34px; padding: 7px 10px; background: transparent; border: 0; color: var(--muted); font-size: .75rem; font-weight: 650; cursor: pointer; }
+.language-switch button + button { border-left: 1px solid var(--line); }
+.language-switch button:hover:not(.active) { background: #f0eee9; color: var(--ink); }
+.language-switch button.active { background: var(--accent); color: #fff; }
 .skip-link { position: fixed; top: 1rem; left: 1rem; z-index: 5; padding: .8rem 1rem; background: var(--ink); color: white; transform: translateY(-200%); }
 .skip-link:focus { transform: translateY(0); }
 
