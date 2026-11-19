@@ -152,8 +152,8 @@ function StorefrontPreview({ products, theme, size }) {
           </div>
         </div>
         <div className="storefront-contact">
-          <span><Icon name="pin" size={12} /> 900 Fifth St, Nanaimo, BC</span>
-          <span><Icon name="phone" size={12} /> (250) 753-3245</span>
+          <span><Icon name="pin" size={16} /> 900 Fifth St, Nanaimo, BC</span>
+          <span><Icon name="phone" size={16} /> (250) 753-3245</span>
         </div>
       </div>
     </div>
@@ -198,7 +198,6 @@ function PreviewPage({ products, theme, onSaveTheme, toast }) {
         <div className={`preview-stage ${device === 'mobile' ? 'is-mobile' : ''}`}>
           <StorefrontPreview products={products} theme={theme} size={device} />
         </div>
-        <p className="preview-hint"><Icon name="eye" size={16} /> Read-only example. The customer ordering site will be connected in a later phase.</p>
       </section>
       <ThemeSelector draftTheme={draftTheme} onDraftChange={setDraftTheme} savedTheme={theme} onSave={save} />
     </div>

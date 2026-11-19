@@ -11,6 +11,7 @@ function formatPrice(value) {
 
 function App() {
   const [menu, setMenu] = useState([]);
+  const [language, setLanguage] = useState("en");
   const [status, setStatus] = useState("loading");
   const [attempt, setAttempt] = useState(0);
 
@@ -27,7 +28,7 @@ function App() {
         });
         if (!response.ok) throw new Error("Menu request failed");
         const data = await response.json();
-        if (!Array.isArray(data) || data.some((item) => !item || typeof item.name !== "string")) {
+        if (!Array.isArray(data) || data.some((item) => !item || typeof item.name !== "string" || typeof item.french_name !== "string")) {
           throw new Error("Invalid menu response");
         }
         if (active) {
@@ -56,7 +57,27 @@ function App() {
         <a className="wordmark" href="#top" aria-label="EZ Bites home">
           ez<span>bites</span><span className="wordmark-period">.</span>
         </a>
-        <a className="menu-link" href="#menu" aria-current="page">The menu</a>
+        <div className="header-actions">
+          <a className="menu-link" href="#menu" aria-current="page">The menu</a>
+          <div className="language-switch" role="group" aria-label="Menu language">
+            <button
+              type="button"
+              className={language === "en" ? "active" : ""}
+              aria-pressed={language === "en"}
+              onClick={() => setLanguage("en")}
+            >
+              EN
+            </button>
+            <button
+              type="button"
+              className={language === "fr" ? "active" : ""}
+              aria-pressed={language === "fr"}
+              onClick={() => setLanguage("fr")}
+            >
+              FR
+            </button>
+          </div>
+        </div>
       </header>
 
       <main id="top" className="menu-layout">
@@ -107,7 +128,7 @@ function App() {
                 {menu.map((item, index) => (
                   <li className="menu-item" key={item.id ?? index}>
                     <span className="item-number" aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
-                    <h3>{item.name}</h3>
+                    <h3>{language === "en" ? item.name : item.french_name}</h3>
                     <span className="item-price">{formatPrice(item.price)}</span>
                   </li>
                 ))}
