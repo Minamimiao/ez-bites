@@ -27,7 +27,7 @@
 
 7. [ Data design ](#section7)
 
-8. [ Game state and flow of play ](#section8)
+8. [ Application states and flow of use ](#section8)
 
 9. [ Transition to physical design ](#section9)
 
